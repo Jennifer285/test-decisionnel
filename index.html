@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Profil Décisionnel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .answer-option {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .answer-option:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .answer-option.selected {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .answer-option input[type="radio"] {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .profile-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .profile-title {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .profile-description {
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        .profile-details {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .profile-details h3 {
+            margin-bottom: 10px;
+        }
+
+        .secondary-profile {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            color: #333;
+        }
+
+        .secondary-profile h3 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .restart-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 15px 35px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .question-text {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Test de Profil Décisionnel</h1>
+            <p>Identifie ton style de prise de décision et découvre comment tu gères le risque et l'incertitude.</p>
+        </div>
+
+        <div id="test-section">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            <form id="quiz-form"></form>
+            <button class="submit-btn" id="submit-btn" onclick="calculateResults()">Voir mes résultats</button>
+        </div>
+
+        <div class="results" id="results-section"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                id: 1,
+                text: "Quand tu dois prendre une décision importante...",
+                answers: [
+                    { text: "Je dresse la liste des pour et des contre.", profile: "A" },
+                    { text: "Je me fie à mon intuition.", profile: "B" },
+                    { text: "Je demande l'avis d'une personne de confiance.", profile: "C" },
+                    { text: "Je décide rapidement, quitte à ajuster ensuite.", profile: "D" }
+                ]
+            },
+            {
+                id: 2,
+                text: "Face à un risque, tu te sens plutôt...",
+                answers: [
+                    { text: "Stressé mais j'analyse les faits.", profile: "A" },
+                    { text: "Excité, j'aime le défi.", profile: "D" },
+                    { text: "Réservé, je préfère anticiper.", profile: "C" },
+                    { text: "Confiant, j'agis sans trop réfléchir.", profile: "B" }
+                ]
+            },
+            {
+                id: 3,
+                text: "Quand tu reçois une information contradictoire...",
+                answers: [
+                    { text: "Je vérifie les sources avant d'agir.", profile: "A" },
+                    { text: "Je fais confiance à mon ressenti.", profile: "B" },
+                    { text: "Je cherche un compromis.", profile: "C" },
+                    { text: "Je choisis la version la plus efficace.", profile: "D" }
+                ]
+            },
+            {
+                id: 4,
+                text: "Tes décisions sont souvent...",
+                answers: [
+                    { text: "Basées sur des données et des faits.", profile: "A" },
+                    { text: "Spontanées et intuitives.", profile: "B" },
+                    { text: "Prudentes et concertées.", profile: "C" },
+                    { text: "Rapides et orientées vers l'action.", profile: "D" }
+                ]
+            },
+            {
+                id: 5,
+                text: "En situation d'incertitude...",
+                answers: [
+                    { text: "J'essaie de tout clarifier avant de décider.", profile: "A" },
+                    { text: "J'accepte de me tromper, c'est formateur.", profile: "B" },
+                    { text: "J'attends d'avoir plus d'éléments.", profile: "C" },
+                    { text: "Je tente quelque chose sans perdre de temps.", profile: "D" }
+                ]
+            },
+            {
+                id: 6,
+                text: "Comment gères-tu l'échec ?",
+                answers: [
+                    { text: "J'analyse ce qui n'a pas marché.", profile: "A" },
+                    { text: "J'écoute mon intuition pour rebondir.", profile: "B" },
+                    { text: "J'en parle pour comprendre.", profile: "C" },
+                    { text: "Je passe à autre chose, rapidement.", profile: "D" }
+                ]
+            },
+            {
+                id: 7,
+                text: "Avant de prendre une décision...",
+                answers: [
+                    { text: "Je collecte toutes les données disponibles.", profile: "A" },
+                    { text: "Je visualise le résultat dans ma tête.", profile: "B" },
+                    { text: "Je demande conseil à des pairs.", profile: "C" },
+                    { text: "Je me lance pour voir ce que ça donne.", profile: "D" }
+                ]
+            },
+            {
+                id: 8,
+                text: "Ta relation au risque, c'est plutôt...",
+                answers: [
+                    { text: "À éviter.", profile: "A" },
+                    { text: "À doser intelligemment.", profile: "B" },
+                    { text: "À encadrer.", profile: "C" },
+                    { text: "À provoquer pour innover.", profile: "D" }
+                ]
+            },
+            {
+                id: 9,
+                text: "Quand tu travailles en équipe...",
+                answers: [
+                    { text: "J'analyse les arguments avant de trancher.", profile: "A" },
+                    { text: "Je m'appuie sur les ressentis du groupe.", profile: "B" },
+                    { text: "Je cherche le consensus.", profile: "C" },
+                    { text: "Je tranche vite pour avancer.", profile: "D" }
+                ]
+            },
+            {
+                id: 10,
+                text: "Si tu devais te définir en un mot comme décideur...",
+                answers: [
+                    { text: "Logique.", profile: "A" },
+                    { text: "Intuitif.", profile: "B" },
+                    { text: "Prudent.", profile: "C" },
+                    { text: "Audacieux.", profile: "D" }
+                ]
+            }
+        ];
+
+        const profiles = {
+            A: {
+                name: "Le Rationnel",
+                icon: "🧮",
+                description: "Tu bases tes décisions sur la logique et les faits. Tu aimes comprendre avant d'agir, ce qui t'aide à limiter les erreurs. Attention cependant à ne pas te bloquer par excès d'analyse.",
+                strengths: "Rigueur, analyse, fiabilité",
+                risks: "Lenteur, manque de flexibilité"
+            },
+            B: {
+                name: "L'Intuitif",
+                icon: "💡",
+                description: "Tu te fies à ton instinct et captes rapidement les signaux faibles. Ta créativité et ta réactivité sont tes atouts majeurs. Veille cependant à ne pas négliger les données objectives.",
+                strengths: "Créativité, réactivité, vision",
+                risks: "Impulsivité, manque de structure"
+            },
+            C: {
+                name: "Le Prudent",
+                icon: "⚖️",
+                description: "Tu cherches à réduire le risque et consultes avant d'agir. Ta capacité à anticiper et à sécuriser est précieuse. Attention à ne pas ralentir la prise de décision par excès de précaution.",
+                strengths: "Anticipation, sécurisation, réflexion",
+                risks: "Lenteur, aversion au risque"
+            },
+            D: {
+                name: "Le Fonceur",
+                icon: "🔥",
+                description: "Tu aimes l'action et tranches vite. Tu vois le risque comme une opportunité et tu es orienté résultat. Attention à ne pas négliger l'analyse et la consultation.",
+                strengths: "Décision rapide, audace, orientation résultat",
+                risks: "Précipitation, manque d'analyse"
+            }
+        };
+
+        const complementaryProfiles = {
+            A: { profile: "C", message: "tu gagnes en efficacité lorsque tu t'autorises à lâcher prise." },
+            B: { profile: "A", message: "tu bénéficies d'une meilleure structure en intégrant plus d'analyse." },
+            C: { profile: "B", message: "tu progresses en osant davantage et en faisant confiance à ton intuition." },
+            D: { profile: "A", message: "tu améliores tes décisions en prenant le temps d'analyser." }
+        };
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function renderQuiz() {
+            const form = document.getElementById('quiz-form');
+            
+            questions.forEach((question, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                
+                const shuffledAnswers = shuffleArray(question.answers);
+                
+                questionCard.innerHTML = `
+                    <div class="question-number">Question ${question.id}/10</div>
+                    <div class="question-text">${question.text}</div>
+                    <div class="answers">
+                        ${shuffledAnswers.map((answer, answerIndex) => `
+                            <label class="answer-option" onclick="selectAnswer(this)">
+                                <input type="radio" name="q${question.id}" value="${answer.profile}" required>
+                                <span>${answer.text}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                
+                form.appendChild(questionCard);
+            });
+        }
+
+        function selectAnswer(label) {
+            const radio = label.querySelector('input[type="radio"]');
+            const allOptions = label.parentElement.querySelectorAll('.answer-option');
+            
+            allOptions.forEach(opt => opt.classList.remove('selected'));
+            label.classList.add('selected');
+            radio.checked = true;
+            
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const totalQuestions = questions.length;
+            const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
+            const progress = (answeredQuestions / totalQuestions) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = answeredQuestions < totalQuestions;
+        }
+
+        function calculateResults() {
+            const form = document.getElementById('quiz-form');
+            const formData = new FormData(form);
+            
+            const scores = { A: 0, B: 0, C: 0, D: 0 };
+            
+            for (let value of formData.values()) {
+                scores[value]++;
+            }
+            
+            const sortedProfiles = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+            const mainProfile = sortedProfiles[0][0];
+            const secondaryProfile = sortedProfiles[1][0];
+            
+            displayResults(mainProfile, secondaryProfile, scores);
+        }
+
+        function displayResults(mainProfile, secondaryProfile, scores) {
+            const profile = profiles[mainProfile];
+            const complementary = complementaryProfiles[mainProfile];
+            
+            const resultsSection = document.getElementById('results-section');
+            resultsSection.innerHTML = `
+                <div class="profile-card">
+                    <div class="profile-icon">${profile.icon}</div>
+                    <div class="profile-title">Ton profil : ${profile.name}</div>
+                    <div class="profile-description">${profile.description}</div>
+                    <div class="profile-details">
+                        <h3>✨ Forces</h3>
+                        <p>${profile.strengths}</p>
+                        <h3 style="margin-top: 15px;">⚠️ Points de vigilance</h3>
+                        <p>${profile.risks}</p>
+                    </div>
+                </div>
+                
+                <div class="secondary-profile">
+                    <h3>💬 Profil complémentaire : ${profiles[complementary.profile].name}</h3>
+                    <p>${complementary.message}</p>
+                    
+                    <div style="margin-top: 25px;">
+                        <h3 style="color: #764ba2;">📊 Répartition de tes réponses :</h3>
+                        <div style="margin-top: 15px;">
+                            ${Object.entries(scores).map(([key, value]) => `
+                                <div style="margin: 10px 0;">
+                                    <strong>${profiles[key].name}</strong>: ${value}/10
+                                    <div style="background: #e0e0e0; height: 20px; border-radius: 10px; overflow: hidden; margin-top: 5px;">
+                                        <div style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); height: 100%; width: ${value * 10}%; transition: width 0.5s ease;"></div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <center>
+                    <button class="restart-btn" onclick="location.reload()">🔄 Refaire le test</button>
+                </center>
+            `;
+            
+            document.getElementById('test-section').style.display = 'none';
+            resultsSection.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        renderQuiz();
+        document.getElementById('submit-btn').disabled = true;
+    </script>
+</body>
+</html>
